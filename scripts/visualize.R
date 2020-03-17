@@ -1,6 +1,7 @@
-# 2020-03-17: log2 values for heatmap and pca
-# 2020-03-16: pca plots and bug fixes (free axis limits of volcano plot)
-#             remove dependency to online resources (ensembldb)
+# 2020-03-17: Use log2 values for heatmap and pca
+#             Fix cutoff lines on volcano plots for adjusted p values
+# 2020-03-16: Add pca plots and bug fixes (free axis limits of volcano plot)
+#             Remove dependency to online resources (ensembldb)
 #             but it is now restricted to human data (EnsDb.Hsapiens.v86)!
 # To do: fix restriction to human data by reading in a gene annotation file
 
@@ -103,12 +104,12 @@ plot.volcano.heatmap <- function(name.control, name.treat) {
   if (dea.tool == 'edgeR') {
     # fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'logFC', y = 'FDR', pCutoff = 10e-5, col = c("grey30", "orange2", "royalblue", "red2"),
     #                                FCcutoff = 1, xlim = c(-5, 5), ylim = c(0, 10), transcriptPointSize = 1.5, title = NULL, subtitle = NULL)  
-    fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'logFC', y = 'FDR', pCutoff = 10e-5, col = c("grey30", "orange2", "royalblue", "red2"),
+    fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'logFC', y = 'FDR', pCutoff = 1e-2, col = c("grey30", "orange2", "royalblue", "red2"),
                                    FCcutoff = 1, transcriptPointSize = 1.5, title = NULL, subtitle = NULL)  
   } else if (dea.tool == 'DESeq2') {
     # fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'log2FoldChange', y = 'padj', pCutoff = 10e-5, col = c("grey30", "orange2", "royalblue", "red2"),
     #                                FCcutoff = 1, xlim = c(-5, 5), ylim = c(0, 10), transcriptPointSize = 1.5, title = NULL, subtitle = NULL)
-    fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'log2FoldChange', y = 'padj', pCutoff = 10e-5, col = c("grey30", "orange2", "royalblue", "red2"),
+    fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'log2FoldChange', y = 'padj', pCutoff = 1e-2, col = c("grey30", "orange2", "royalblue", "red2"),
                                    FCcutoff = 1, transcriptPointSize = 1.5, title = NULL, subtitle = NULL)
   }
   
