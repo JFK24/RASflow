@@ -1,8 +1,13 @@
 # combine quant of samples to group
 
-library(biomaRt)
+# 2020-03-16: remove dependency to online resources (biomaRt) 
+#             add local dependency to GTF file (specified in yaml config file)
+# To do: remove save tx2gene file?
+
+#library(biomaRt)
 library(yaml)
 library(tximport)
+library(GenomicFeatures)
 
 # ====================== define some functions ======================
 
@@ -61,23 +66,33 @@ names(files) <- samples
 
 # ====================== prepare the tx2gene table ======================
 if (gene.level) {
-    ensembl <- useEnsembl(biomart = "ensembl", dataset = dataset)
-    datasets <- listDatasets(ensembl)
-
-    attributes <- listAttributes(mart = ensembl)
 
     # remove the version to get more matches
     trans.id <- remove_version(files)
-
     files.noVersion <- file.path(input.path, samples, "quant_noVersion.sf")
     names(files.noVersion) <- samples
 
-    tx2gene <- getBM(attributes=c('ensembl_transcript_id', 'ensembl_gene_id'),
-                    filters = 'ensembl_transcript_id', values = trans.id, mart = ensembl)
+#  if (dataset=="hsapiens_gene_ensembl"){
+    annot.file <- yaml.file$ANNOTATION
+    txdb <- makeTxDbFromGFF(file=annot.file)
+    k <- keys(txdb, keytype = "TXNAME")
+    tx2gene <- select(txdb, k, "GENEID", "TXNAME")
     # save tx2gene
     output.file.tx2gene <- file.path(output.path, "countGroup", 'tx2gene.RData')
     save(tx2gene, file = output.file.tx2gene)
+#  } else{
+#    ensembl <- useEnsembl(biomart = "ensembl", dataset = dataset)
+##    ensembl <- useEnsembl(biomart = "ensembl", dataset = dataset, mirror="uswest")
+##    datasets <- listDatasets(ensembl)
+##    attributes <- listAttributes(mart = ensembl)
+#    tx2gene <- getBM(attributes=c('ensembl_transcript_id', 'ensembl_gene_id'),
+#                    filters = 'ensembl_transcript_id', values = trans.id, mart = ensembl)
+#    # save tx2gene
+#    output.file.tx2gene <- file.path(output.path, "countGroup", 'tx2gene.RData')
+#    save(tx2gene, file = output.file.tx2gene)
+#  }
 }
+
 # ====================== get raw and normalized abundance tables ======================
 
 trans.matrix <- tximport(files, type = "salmon", txOut = TRUE, countsFromAbundance = "no")
