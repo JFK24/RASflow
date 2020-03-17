@@ -7,19 +7,19 @@ PROJECT: VAL_PROJECT_NAME
 # ================== Control of the workflow ==================
 
 ## Do you need to do quality control?
-QC: no  # "yes" or "no"
+QC: VAL_QC  # "yes" or "no"
 
 ## Do you need to do trimming?
 TRIMMED: VAL_TRIMMED  # "yes" or "no"?
 
 ## Which mapping reference do you want to use? Genome or transcriptome?
-REFERENCE: transcriptome  # "genome" or "transcriptome"
+REFERENCE: VAL_REFERENCE  # "genome" or "transcriptome"
 
 ## Do you want to do Differential Expression Analysis (DEA)?
-DEA: yes  # "yes" or "no"
+DEA: VAL_DEA  # "yes" or "no"
 
 ## Do you want to visualize the results of DEA?
-VISUALIZE: yes  # "yes" or "no"
+VISUALIZE: VAL_VISUALIZE  # "yes" or "no"
 
 # ================== Shared parameters for some or all of the sub-workflows ==================
 
@@ -39,8 +39,8 @@ END: VAL_END  # "pair" or "single"
 NCORE: VAL_NCORE  # Integer value e.g. 4 ; Use command "getconf _NPROCESSORS_ONLN" to check the number of cores/CPU on your machine
 
 ## paths for intermediate outputs and final outputs
-OUTPUTPATH: data/output # e.g. data/output # intermediate output. do not upload to github
-FINALOUTPUT: output # e.g. output
+OUTPUTPATH: VAL_OUTPUTPATH # e.g. data/output # intermediate output. do not upload to github
+FINALOUTPUT: VAL_FINALOUTPUT # e.g. output
 
 # ================== Configuration for Quality Control ==================
 
@@ -60,21 +60,21 @@ TRANS: VAL_TRANS # data/example/ref/transcriptome/Homo_sapiens.GRCh38.cdna.all.1
 ## genome and annotation files
 GENOME: VAL_GENOME # data/example/ref/genome/Homo_sapiens.GRCh38.dna.chromosome.1.1.10M.fa
 ANNOTATION: VAL_ANNOTATION # data/example/ref/annotation/Homo_sapiens.GRCh38.93.1.1.10M.gtf
-ATTRIBUTE: gene_id # e.g. gene_id  # the attribute used in annotation file. It's usually "gene_id", but double check that since it may also be "gene", "ID"...
+ATTRIBUTE: VAL_ATTRIBUTE # e.g. gene_id  # the attribute used in annotation file. It's usually "gene_id", but double check that since it may also be "gene", "ID"...
 
 ## aligner
-ALIGNER: hisat2 # e.g. hisat2
+ALIGNER: VAL_ALIGNER # e.g. hisat2
 
 ## tool for feature count
-COUNTER: featureCounts  # default is "featureCounts", or you may want to use "htseq-count"
+COUNTER: VAL_COUNTER  # default is "featureCounts", or you may want to use "htseq-count"
 
 ## alignment quality control
-alignmentQC: no  # "yes" or "no" to specify whether you want to do alignment QC
+alignmentQC: VAL_alignmentQC  # "yes" or "no" to specify whether you want to do alignment QC
 
 # ================== Configuration for DEA ==================
 
 ## Do you want to use edgeR or DESeq2 to do DEA?
-DEATOOL: DESeq2  # "edgeR" or "DESeq2"? DESeq2 is recommended for transcriptome-based and DEA
+DEATOOL: VAL_DEATOOL  # "edgeR" or "DESeq2"? DESeq2 is recommended for transcriptome-based and DEA
 
 ## Is your experiment designed in a pair-wise way?
 PAIR: VAL_PAIR  # Is this a pair test or not? ("TRUE" or "FALSE")
@@ -86,12 +86,12 @@ TREAT: VAL_TREAT     # a list in square brackets e.g. ["Treated"] or ["Baseline"
 ## what you fill in there should agree with the "group" column in metadata.tsv
 
 FILTER:
-  yesOrNo: TRUE  # Filter out low expressed transcripts/genes or not? (TRUE or FALSE) It's better to be set to TRUE. FALSE is set as default only for testing fake toy data
+  yesOrNo: VAL_FILTER  # Filter out low expressed transcripts/genes or not? (TRUE or FALSE) It's better to be set to TRUE. FALSE is set as default only for testing fake toy data
 
 ## If transcriptome was used as mapping reference in the previous quantification step, the following params need to be specifed
 
 ## Do you need to do gene-level differential expression analysis?
-GENE_LEVEL: TRUE  # TRUE or FALSE. But if you are using De Novo assembly or not using ENSEMBL, FALSE is the only option
+GENE_LEVEL: VAL_GENE_LEVEL  # TRUE or FALSE. But if you are using De Novo assembly or not using ENSEMBL, FALSE is the only option
 ## If TRUE, specify the corresponding dataset in ENSEMBL for your interested organism
 EnsemblDataSet: VAL_EnsemblDataSet # e.g. hsapiens_gene_ensembl ; search for your dataset in the file EnsemblDataSet_look_up_table.csv 
 
