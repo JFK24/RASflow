@@ -53,13 +53,13 @@ FINALOUTPUT: VAL_FINALOUTPUT # e.g. output
 # ================== Configuration for quantification using transcriptome ==================
 
 ## transcriptome file
-TRANS: VAL_TRANSCRIPTOME_FILEPATH # data/example/ref/transcriptome/Homo_sapiens.GRCh38.cdna.all.1.1.10M.fa.gz
+TRANS: VAL_TRANS # data/example/ref/transcriptome/Homo_sapiens.GRCh38.cdna.all.1.1.10M.fa.gz
 
 # ================== Configuration for alignment to genome and feature count ==================
 
 ## genome and annotation files
-GENOME: VAL_GENOME_FILEPATH # data/example/ref/genome/Homo_sapiens.GRCh38.dna.chromosome.1.1.10M.fa
-ANNOTATION: VAL_ANNOTATION_FILEPATH # data/example/ref/annotation/Homo_sapiens.GRCh38.93.1.1.10M.gtf
+GENOME: VAL_GENOME # data/example/ref/genome/Homo_sapiens.GRCh38.dna.chromosome.1.1.10M.fa
+ANNOTATION: VAL_ANNOTATION # data/example/ref/annotation/Homo_sapiens.GRCh38.93.1.1.10M.gtf
 ATTRIBUTE: VAL_ATTRIBUTE # e.g. gene_id  # the attribute used in annotation file. It's usually "gene_id", but double check that since it may also be "gene", "ID"...
 
 ## aligner
@@ -80,8 +80,8 @@ DEATOOL: VAL_DEATOOL  # "edgeR" or "DESeq2"? DESeq2 is recommended for transcrip
 PAIR: VAL_PAIR  # Is this a pair test or not? ("TRUE" or "FALSE")
 
 ## the comparison(s) you want to do. If multiple comparisons, specify each pair (CONTROL & TREAT) in order respectively
-CONTROL: VAL_CONTROL_GROUPS_LIST # a list in square brackets e.g. ["Normal"] or ["Normal", "Normal", "Baseline"]
-TREAT: VAL_TREAT_GROUPS_LIST     # a list in square brackets e.g. ["Treated"] or ["Baseline", "Treated", "Treated"]
+CONTROL: VAL_CONTROL # a list in square brackets e.g. ["Normal"] or ["Normal", "Normal", "Baseline"]
+TREAT: VAL_TREAT     # a list in square brackets e.g. ["Treated"] or ["Baseline", "Treated", "Treated"]
 ## length of 'CONTROL' should agree with that of 'TREAT'
 ## what you fill in there should agree with the "group" column in metadata.tsv
 
