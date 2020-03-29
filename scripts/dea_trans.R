@@ -1,7 +1,7 @@
 # Use edgeR to do DEA on the outputs from Salmon
 
 suppressMessages(library(biomaRt, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
-suppressMessages(suppressMessages(library(yaml, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(yaml, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(edgeR, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(DESeq2, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(tximport, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))

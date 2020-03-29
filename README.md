@@ -1,5 +1,9 @@
-# RASflow: RNA-Seq Analysis Snakemake Workflow
-RNA-Seq analysis workflow using Snakemake
+# Experimental branch of RASflow: RNA-Seq Analysis Snakemake Workflow
+RASflow modified to meet some project-specific needs. 
+Main differences with the master branch: creates a PCA plot, use local gene 
+annotation files to skip slow and often failing internet queries. 
+Main limitation: gene annotations limited to human genes (to be fixed later)
+
 ## Workflow
 <img src="https://github.com/zhxiaokang/RNA-Seq-analysis/blob/master/workflow/workflow_chart.jpg" width="450">
 
@@ -22,8 +26,43 @@ Modify the metafile describing your data `configs/metadata.tsv`.
 
 Customize the workflow based on your need in `configs/config_main.yaml`.
 
+
+#### Example script to modify the config file
+
+```bash
+
+cd RASflow.git
+
+DATAID=GSE126848
+END=single
+TRIM=no
+CONTROL=[\"healthy\"]
+TREAT=[\"NASH\"]
+
+cp configs/config_main.template.yaml configs/config_main.yaml
+
+sed -i "s/VAL_PROJECT_NAME/$DATAID/" configs/config_main.yaml
+sed -i "s/VAL_TRIMMED/$TRIM/" configs/config_main.yaml
+sed -i "s#VAL_READSPATH#data/datasets/$DATAID#" configs/config_main.yaml
+sed -i "s#VAL_METAFILE#data/datasets/$DATAID/metadata.tsv#" configs/config_main.yaml
+sed -i "s/VAL_END/$END/" configs/config_main.yaml
+sed -i "s/VAL_NCORE/4/" configs/config_main.yaml
+sed -i "s#VAL_FINALOUTPUT#../../RASflowResults#" configs/config_main.yaml
+sed -i "s#VAL_TRANS#data/ref/GRCh38.99/Homo_sapiens.GRCh38.cdna.all.fa.gz#" configs/config_main.yaml
+sed -i "s#VAL_GENOME#data/ref/GRCh38.99/Homo_sapiens.GRCh38.dna_sm.alt.fa.gz#" configs/config_main.yaml
+sed -i "s#VAL_ANNOTATION#data/ref/GRCh38.99/Homo_sapiens.GRCh38.99.gtf.gz#" configs/config_main.yaml
+sed -i "s/VAL_PAIR/FALSE/" configs/config_main.yaml
+sed -i "s/VAL_CONTROL/$CONTROL/" configs/config_main.yaml
+sed -i "s/VAL_TREAT/$TREAT/" configs/config_main.yaml
+sed -i "s/VAL_EnsemblDataSet/hsapiens_gene_ensembl/" configs/config_main.yaml
+```
+
 ### Run RASflow
 `python main.py`
+
+or the following to skip the question
+
+`python main.py <<< y`
 
 ## Tutorial
 A more detailed tutorial of how to use this workflow can be found here: [Tutorial](https://github.com/zhxiaokang/RASflow/blob/master/Tutorial.pdf)
