@@ -1,6 +1,6 @@
-library(yaml)
-library(edgeR)
-library(DESeq2)
+suppressMessages(library(yaml, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(edgeR, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(DESeq2, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 
 # ====================== define the function of DEA ======================
 

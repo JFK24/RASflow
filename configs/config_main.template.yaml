@@ -40,7 +40,7 @@ NCORE: VAL_NCORE  # Integer value e.g. 4 ; Use command "getconf _NPROCESSORS_ONL
 
 ## paths for intermediate outputs and final outputs
 OUTPUTPATH: data/output # e.g. data/output # intermediate output. do not upload to github
-FINALOUTPUT: output # e.g. output
+FINALOUTPUT: VAL_FINALOUTPUT # e.g. output
 
 # ================== Configuration for Quality Control ==================
 

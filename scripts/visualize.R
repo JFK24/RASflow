@@ -7,17 +7,17 @@
 
 # load the libraries
 if (!require("plotscale")) install.packages('scripts/plotscale_0.1.6.tar.gz', repos = NULL, type="source")
-library(yaml, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE)
-library(hash, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE)
-library(mygene, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE)
-library(EnhancedVolcano, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE)
-library(plotscale, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE)
-library(GenomicFeatures)
-library(EnsDb.Hsapiens.v86)
-library(FactoMineR)
-library(factoextra)
-library(ggpubr)
-library(dplyr)
+suppressMessages(library(yaml, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(hash, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(mygene, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(EnhancedVolcano, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(plotscale, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(GenomicFeatures, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(EnsDb.Hsapiens.v86, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(FactoMineR, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(factoextra, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(ggpubr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(dplyr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 
 # ====================== load parameters in config file ======================
 

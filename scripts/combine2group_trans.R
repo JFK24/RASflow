@@ -5,9 +5,9 @@
 # To do: remove save tx2gene file?
 
 #library(biomaRt)
-library(yaml)
-library(tximport)
-library(GenomicFeatures)
+suppressMessages(library(yaml, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(tximport, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(GenomicFeatures, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 
 # ====================== define some functions ======================
 
