@@ -72,5 +72,5 @@ rule summaryReport:
     params:
         path = intermediate_path
     shell:
-        "multiqc {params.path} --filename {output.report}"
+        "multiqc {params.path} --filename {output.report} --quiet"
 

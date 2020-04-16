@@ -16,7 +16,7 @@ rule indexTrans:
     params:
         index = config["OUTPUTPATH"] + "/indexes/index"
     shell:
-        "hisat2-build -p {config[NCORE]} {input.trans} {params.index}"
+        "hisat2-build --quiet -p {config[NCORE]} {input.trans} {params.index}"
 
 rule getReads:
     input:
@@ -41,7 +41,7 @@ rule alignment:
     benchmark:
         config["OUTPUTPATH"] + "/benchmarks/{sample}.hisat2.benchmark.txt"
     shell:
-        "hisat2 -p {config[NCORE]} -x {params.index} -1 {input.forward} -2 {input.reverse} -S {output.sam}"
+        "hisat2 --quiet -p {config[NCORE]} -x {params.index} -1 {input.forward} -2 {input.reverse} -S {output.sam}"
         " && samtools view -b -S {output.sam} > {output.bam}"
 
 rule sortIndex:

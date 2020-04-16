@@ -57,7 +57,7 @@ if end == "pair":
             tpm = final_path + "/tpmFile/{sample}_tpm.tsv"
         shell:
             """
-            salmon quant -i {input.index} -l A -1 {input.forward} -2 {input.reverse} -o {output.quant_dir} -p {config[NCORE]} --seqBias --useVBOpt --validateMappings
+            salmon quant -i {input.index} -l A -1 {input.forward} -2 {input.reverse} -o {output.quant_dir} -p {config[NCORE]} --seqBias --useVBOpt --validateMappings 2> /dev/null
             awk 'NR==1{{next}}{{print $1"\\t"$4}}' {output.quant_dir}/quant.sf > {output.tpm}
             """
 else:
@@ -70,7 +70,7 @@ else:
             tpm = final_path + "/tpmFile/{sample}_tpm.tsv"
         shell:
             """
-            salmon quant -i {input.index} -l A -r {input.read} -o {output.quant_dir} -p {config[NCORE]} --seqBias --useVBOpt --validateMappings
+            salmon quant -i {input.index} -l A -r {input.read} -o {output.quant_dir} -p {config[NCORE]} --seqBias --useVBOpt --validateMappings 2> /dev/null
             awk 'NR==1{{next}}{{print $1"\\t"$4}}' {output.quant_dir}/quant.sf > {output.tpm}
             """
 
@@ -80,5 +80,5 @@ rule summaryReport:
     output:
         report = final_path + "/report_quantify.html"
     shell:
-        "multiqc {input} --filename {output}"
+        "multiqc {input} --filename {output} --quiet"
         

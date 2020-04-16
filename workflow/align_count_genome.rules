@@ -48,7 +48,7 @@ rule indexGenome:
     params:
         index = intermediate_path + "/indexes/index"
     shell:
-        "mkdir {output.indexes} && hisat2-build -p {config[NCORE]} {input.genome} {params.index}"
+        "mkdir {output.indexes} && hisat2-build --quiet -p {config[NCORE]} {input.genome} {params.index}"
         "&& hisat2_extract_splice_sites.py {config[ANNOTATION]} > {output.splicesites}"
 
 if end == "pair":
@@ -66,7 +66,7 @@ if end == "pair":
         benchmark:
             intermediate_path + "/benchmarks/{sample}.hisat2.benchmark.txt"
         run:
-            shell("hisat2 -p {config[NCORE]} --known-splicesite-infile {input.splicesites} -x {params.index} -1 {input.forward} -2 {input.reverse} -S {output.sam}")
+            shell("hisat2 --quiet -p {config[NCORE]} --known-splicesite-infile {input.splicesites} -x {params.index} -1 {input.forward} -2 {input.reverse} -S {output.sam}")
             shell("samtools view -@ {config[NCORE]} -b -S {output.sam} > {output.bam}")
 else:
     rule alignment:
@@ -82,7 +82,7 @@ else:
         benchmark:
             intermediate_path + "/benchmarks/{sample}.hisat2.benchmark.txt"
         run:
-            shell("hisat2 -p {config[NCORE]} --known-splicesite-infile {input.splicesites} -x {params.index} -U {input.forward} -S {output.sam}")
+            shell("hisat2 --quiet -p {config[NCORE]} --known-splicesite-infile {input.splicesites} -x {params.index} -U {input.forward} -S {output.sam}")
             shell("samtools view -@ {config[NCORE]} -b -S {output.sam} > {output.bam}")
 
 rule sortBAM:
@@ -107,7 +107,7 @@ rule featureCount:
             else:
                 shell("featureCounts -T {config[NCORE]} -t exon -g {config[ATTRIBUTE]} -a {input.annotation} -o {output.count} {input.sort} && tail -n +3 {output.count} | cut -f1,7 > temp.{wildcards.sample} && mv temp.{wildcards.sample} {output.count}")
         elif config["COUNTER"]=="htseq-count":
-            shell("htseq-count -f bam -i {config[ATTRIBUTE]} -s no -t exon {input.sort} {input.annotation} | sed '/^__/ d' > {output.count}")
+            shell("htseq-count --quiet -f bam -i {config[ATTRIBUTE]} -s no -t exon {input.sort} {input.annotation} | sed '/^__/ d' > {output.count}")
 
 if alignmentQC:
     rule alignmentQC:
@@ -133,4 +133,4 @@ else:
         output:
             report = final_path + "/report_align_count.html"
         shell:
-            "multiqc {input.count_summary} --filename {output.report}"
+            "multiqc {input.count_summary} --filename {output.report} --quiet"

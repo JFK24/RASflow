@@ -34,8 +34,8 @@ if end == "pair":
         params:
             outputpath = final_path + "/fastqc"
         shell:
-            "fastqc -t $(({config[NCORE]}+0)) -o {params.outputpath} {input.forward} && "
-            "fastqc -t $(({config[NCORE]}+0)) -o {params.outputpath} {input.reverse}"
+            "fastqc --quiet -t $(({config[NCORE]}+0)) -o {params.outputpath} {input.forward} && "
+            "fastqc --quiet -t $(({config[NCORE]}+0)) -o {params.outputpath} {input.reverse}"
             
     rule summaryReport:
         input:
@@ -46,7 +46,7 @@ if end == "pair":
         params:
             path = final_path + "/fastqc"
         shell:
-            "multiqc {params.path} --filename {output.report}"
+            "multiqc {params.path} --filename {output.report} --quiet"
             
 else:
     rule getReads:
@@ -66,7 +66,7 @@ else:
         params:
             outputpath = final_path + "/fastqc"
         shell:
-            "fastqc -t $(({config[NCORE]}+0)) -o {params.outputpath} {input.read}"
+            "fastqc --quiet -t $(({config[NCORE]}+0)) -o {params.outputpath} {input.read}"
             
     rule summaryReport:
         input:
@@ -76,5 +76,5 @@ else:
         params:
             path = final_path + "/fastqc"
         shell:
-            "multiqc {params.path} --filename {output.report}"
+            "multiqc {params.path} --filename {output.report} --quiet"
     
