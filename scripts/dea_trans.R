@@ -121,6 +121,7 @@ DEA <- function(control, treat, file.control, file.treat, output.path.dea) {
     dds$group <- relevel(dds$group, ref = control)
     
     ## perform DEA
+    dds <- estimateSizeFactors(dds, type="poscounts")
     dds <- DESeq(dds)
     
     ## export the results
