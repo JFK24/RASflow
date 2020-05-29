@@ -25,8 +25,8 @@ rule getReads:
         forward = temp(config["OUTPUTPATH"] + "/reads/{sample}_forward.fastq.gz"),
         reverse = temp(config["OUTPUTPATH"] + "/reads/{sample}_reverse.fastq.gz")
     run:
-        shell("scp -i {input.key} {config[NELSIN]}/{wildcards.sample}_*_R1_001.fastq.gz {output.forward}")
-        shell("scp -i {input.key} {config[NELSIN]}/{wildcards.sample}_*_R2_001.fastq.gz {output.reverse}")
+        shell("scp -i {input.key} {config[NELSIN]}/{wildcards.sample}_*_1_001.fastq.gz {output.forward}")
+        shell("scp -i {input.key} {config[NELSIN]}/{wildcards.sample}_*_2_001.fastq.gz {output.reverse}")
 
 rule alignment:
     input:

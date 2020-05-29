@@ -11,8 +11,8 @@ NCORE=10
 while IFS='' read -r i || [[ -n "$i" ]]; do
     echo Start processing sample $i at: `date`
     echo Copy paired reads from NeLS to server......
-    forward=${i}_S*_R1_001.fastq.gz
-    reverse=${i}_S*_R2_001.fastq.gz
+    forward=${i}_S*_1_001.fastq.gz
+    reverse=${i}_S*_2_001.fastq.gz
     scp -i $KEY ${NELSIN}/$forward $READSDIR
     scp -i $KEY ${NELSIN}/$reverse $READSDIR
 	
