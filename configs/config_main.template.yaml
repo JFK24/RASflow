@@ -60,6 +60,7 @@ TRANS: VAL_TRANS # data/example/ref/transcriptome/Homo_sapiens.GRCh38.cdna.all.1
 ## genome and annotation files
 GENOME: VAL_GENOME # data/example/ref/genome/Homo_sapiens.GRCh38.dna.chromosome.1.1.10M.fa
 ANNOTATION: VAL_ANNOTATION # data/example/ref/annotation/Homo_sapiens.GRCh38.93.1.1.10M.gtf
+BIOMART_ENS_IDS: VAL_BIOMART_ENS_IDS # Manual download from Biomart (required columns `Gene stable ID`, `Transcript stable ID`, `Gene name`, `Transcript name`)
 ATTRIBUTE: gene_id # e.g. gene_id  # the attribute used in annotation file. It's usually "gene_id", but double check that since it may also be "gene", "ID"...
 
 ## aligner

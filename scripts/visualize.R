@@ -1,3 +1,4 @@
+# 2020-06-30: Use local Biomart annotation file (remove EnsDb.Hsapiens.v86)
 # 2020-03-17: Use log2 values for heatmap and pca
 #             Fix cutoff lines on volcano plots for adjusted p values
 # 2020-03-16: Add pca plots and bug fixes (free axis limits of volcano plot)
@@ -5,7 +6,9 @@
 #             but it is now restricted to human data (EnsDb.Hsapiens.v86)!
 # To do: fix restriction to human data by reading in a gene annotation file
 
+# ==============================================================================
 # load the libraries
+# ==============================================================================
 if (!require("plotscale")) install.packages('scripts/plotscale_0.1.6.tar.gz', repos = NULL, type="source")
 suppressMessages(library(yaml, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(hash, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
@@ -13,19 +16,21 @@ suppressMessages(library(mygene, warn.conflicts = FALSE, quietly = TRUE, verbose
 suppressMessages(library(EnhancedVolcano, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(plotscale, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(GenomicFeatures, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
-suppressMessages(library(EnsDb.Hsapiens.v86, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(FactoMineR, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(factoextra, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(ggpubr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(readr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(dplyr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 
-# ====================== load parameters in config file ======================
+# ==============================================================================
+#  load parameters in config file
+# ==============================================================================
 
 # passing the params from command line
 args <- commandArgs(TRUE)
-norm.path <- args[1] # norm.path <- 'output/GSE63511/trans/dea/countGroup'
-dea.path <- args[2]  # dea.path <- 'output/GSE63511/trans/dea'
-out.path <- args[3]  # out.path <- 'output/GSE63511/trans/dea/visualization'
+norm.path <- args[1] # norm.path <- 'output/test/trans/dea/countGroup'
+dea.path <- args[2]  # dea.path <- 'output/test/trans/dea/DEA/gene-level'
+out.path <- args[3]  # out.path <- 'output/test/trans/dea/visualization'
 
 #norm.path <- 'output/GSE63511/trans/dea/countGroup'
 #dea.path <- 'output/GSE63511/trans/dea/DEA/gene-level'
@@ -44,6 +49,10 @@ if (length(args) > 3) {  # this script is used in  visualize_test.rules
 controls <- yaml.file$CONTROL
 treats <- yaml.file$TREAT
 dea.tool <- yaml.file$DEATOOL
+biomart.ids <- yaml.file$BIOMART_ENS_IDS
+biomart.table <- read_tsv(biomart.ids) %>% 
+  select(`Gene stable ID`, `Transcript stable ID`, `Gene name`, `Transcript name`) %>% 
+  rename(gene_id=`Gene stable ID`, trans_id=`Transcript stable ID`, gene_name=`Gene name`, trans_name=`Transcript name`)
 
 # check the number of comparisons
 num.control <- length(controls)  # number of comparisons that the user wants to do
@@ -57,8 +66,10 @@ if (num.control != num.treat) {
 
 num.comparison <- num.control
 
+# ==============================================================================
 # function to plot volcano plot and heatmap
-plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, file.dea.table) {
+# ==============================================================================
+plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, biomart.table) {
   file.dea.table <- paste(dea.path, "/dea_", name.control, "_", name.treat, ".tsv", sep = "")
   norm.control <- paste(norm.path, "/", name.control, "_gene_norm.tsv", sep = "")  # normalized table of control
   norm.treat <- paste(norm.path, "/", name.treat, "_gene_norm.tsv", sep = "")  # normalized table of treat
@@ -72,44 +83,30 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
   }
 
   gene.id.dea <- row.names(dea.table)
-  gene.id.dea.symbols <- ensembldb::select(EnsDb.Hsapiens.v86, keys= gene.id.dea, keytype = "GENEID", columns = c("SYMBOL","GENEID"))
-  gene.dea <- merge(data.frame(GENEID=gene.id.dea), gene.id.dea.symbols, all.x=TRUE)$SYMBOL
-  gene.dea <- left_join(data.frame(GENEID=gene.id.dea, stringsAsFactors=FALSE), gene.id.dea.symbols, by = "GENEID")$SYMBOL
 
-  # gene.symbol.dea.all <- queryMany(gene.id.dea, scopes = 'ensembl.gene', fields = 'symbol')
-  # 
-  # h <- hash()
-  # for (i in 1:nrow(gene.symbol.dea.all)) {
-  #   query <- gene.symbol.dea.all$query[i]
-  #   symbol <- gene.symbol.dea.all$symbol[i]
-  #   if (has.key(query, h)) {  # if there's duplicate for the same query
-  #     h[[query]] <- paste(hash::values(h, keys = query), symbol, sep = ', ')
-  #   } else {
-  #     if (is.na(symbol)) {  # if there's no hit for the query, keep the original id
-  #       h[[query]] <- query
-  #     } else {
-  #       h[[query]] <- symbol
-  #     }
-  #   }
-  # }
-  # 
-  # gene.dea <- gene.id.dea
-  # for (i in c(1:length(gene.dea))) {
-  #   gene.dea[i] <- h[[gene.id.dea[i]]]
-  # }
-  
-  
+  if (length(intersect(row.names(dea.table), biomart.table$gene_id))>0){
+    gene.dea <- data.frame(id=gene.id.dea, stringsAsFactors=FALSE) %>% 
+      left_join(biomart.table %>% group_by(gene_id) %>% top_n(1, trans_id), by=c("id" = "gene_id")) %>% 
+      select(id, gene_name) %>% 
+      rename(GENEID=id, SYMBOL=gene_name)
+  } else {
+    gene.dea <- data.frame(id=gene.id.dea, stringsAsFactors=FALSE) %>% 
+      left_join(biomart.table %>% group_by(trans_id) %>% top_n(1, gene_id), by=c("id" = "trans_id")) %>% 
+      select(id, trans_name) %>% 
+      rename(GENEID=id, SYMBOL=trans_name)
+  }
+
   # volcano plot
   #-----------------------------------------------------------------------------
   if (dea.tool == 'edgeR') {
     # fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'logFC', y = 'FDR', pCutoff = 10e-5, col = c("grey30", "orange2", "royalblue", "red2"),
     #                                FCcutoff = 1, xlim = c(-5, 5), ylim = c(0, 10), transcriptPointSize = 1.5, title = NULL, subtitle = NULL)  
-    fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'logFC', y = 'FDR', pCutoff = 1e-2, col = c("grey30", "orange2", "royalblue", "red2"),
+    fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea$SYMBOL, xlab = bquote(~Log[2]~ "fold change"), x = 'logFC', y = 'FDR', pCutoff = 1e-2, col = c("grey30", "orange2", "royalblue", "red2"),
                                    FCcutoff = 1, transcriptPointSize = 1.5, title = NULL, subtitle = NULL)  
   } else if (dea.tool == 'DESeq2') {
     # fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'log2FoldChange', y = 'padj', pCutoff = 10e-5, col = c("grey30", "orange2", "royalblue", "red2"),
     #                                FCcutoff = 1, xlim = c(-5, 5), ylim = c(0, 10), transcriptPointSize = 1.5, title = NULL, subtitle = NULL)
-    fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea, xlab = bquote(~Log[2]~ "fold change"), x = 'log2FoldChange', y = 'padj', pCutoff = 1e-2, col = c("grey30", "orange2", "royalblue", "red2"),
+    fig.volcano <- EnhancedVolcano(dea.table, lab = gene.dea$SYMBOL, xlab = bquote(~Log[2]~ "fold change"), x = 'log2FoldChange', y = 'padj', pCutoff = 1e-2, col = c("grey30", "orange2", "royalblue", "red2"),
                                    FCcutoff = 1, transcriptPointSize = 1.5, title = NULL, subtitle = NULL)
   }
   
@@ -131,10 +128,9 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
   norm.table.deg <- norm.table[index.deg,]
 
   gene.id.norm.table <- rownames(norm.table.deg)
-  gene.id.norm.table.symbols <- ensembldb::select(EnsDb.Hsapiens.v86, keys= gene.id.norm.table, keytype = "GENEID", columns = c("SYMBOL","GENEID"))
-  gene.symbol.norm.table <- merge(data.frame(GENEID=gene.id.norm.table), gene.id.norm.table.symbols, all.x=TRUE)$SYMBOL
-
-#  gene.symbol.norm.table <- queryMany(gene.id.norm.table, scopes = 'ensembl.gene', fields = 'symbol')$symbol
+  gene.symbol.norm.table <- data.frame(GENEID=gene.id.norm.table, stringsAsFactors=FALSE) %>% 
+    left_join(gene.dea, by=c("GENEID"))
+  gene.symbol.norm.table <- gene.symbol.norm.table$SYMBOL
 
   # if can't find a symbol for the id, then keep the id as it is
   gene.norm.table <- gene.symbol.norm.table
@@ -162,8 +158,9 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
 #  pca.table <- norm.table[which(apply(norm.table, 1, var) != 0), ]
   pca.table <- log2(norm.table[which(apply(norm.table, 1, var) != 0), ]+0.00000001)
   pca.table.ids <- rownames(pca.table)
-  pca.table.symbols <- ensembldb::select(EnsDb.Hsapiens.v86, keys=pca.table.ids, keytype = "GENEID", columns = c("SYMBOL","GENEID"))
-  pca.table.symbols <- merge(data.frame(GENEID=pca.table.ids), pca.table.symbols, all.x=TRUE)$SYMBOL
+  pca.table.symbols <- data.frame(GENEID=pca.table.ids, stringsAsFactors=FALSE) %>% 
+    left_join(gene.dea, by=c("GENEID"))
+  pca.table.symbols <- pca.table.symbols$SYMBOL
   rownames(pca.table) <- paste(pca.table.symbols, pca.table.ids, sep="_")
   pca.table <- t(pca.table)
   
@@ -193,14 +190,13 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
          nrow = 3, ncol = 1,
          filename = file.path(out.path, paste('pca_', name.control, '_', name.treat, '.pdf', sep = ''))
          )
-
-
 }
 
-
-# the main function
+# ==============================================================================
+# MAIN FUNCTION
+# ==============================================================================
 for (ith.comparison in c(1:num.comparison)) {
   name.control <- controls[ith.comparison]
   name.treat <- treats[ith.comparison]
-  plot.volcano.heatmap(name.control, name.treat, dea.path, norm.path, file.dea.table)
+  plot.volcano.heatmap(name.control, name.treat, dea.path, norm.path, biomart.table)
 }

@@ -6,7 +6,9 @@ Main limitation: gene annotations limited to human genes (to be fixed later)
 
 ## To do
 
-* Use gene annotation file for any species
+## Changes
+
+* 2020-06-30: use local gene/transcript symbol annotation file from biomart
 
 ## Workflow
 <img src="https://github.com/zhxiaokang/RNA-Seq-analysis/blob/master/workflow/workflow_chart.jpg" width="450">
@@ -29,7 +31,11 @@ Activate the environment:
 Modify the metafile describing your data `configs/metadata.tsv`.
 
 Customize the workflow based on your need in `configs/config_main.yaml`.
-
+Get manually genome, transcriptome and annotation files 
+(e.g. Homo_sapiens.GRCh38.dna_sm.alt.fa.gz, Homo_sapiens.GRCh38.cdna.all.fa.gz, Homo_sapiens.GRCh38.99.gtf.gz ) 
+(see e.g. ftp://ftp.ensembl.org/pub/release-100/fasta/homo_sapiens/cdna/) and a 
+Biomart table with columns `Gene stable ID`, `Transcript stable ID`, `Gene name`, `Transcript name`
+(see https://www.ensembl.org/biomart/martview).
 
 #### Example script to modify the config file
 
