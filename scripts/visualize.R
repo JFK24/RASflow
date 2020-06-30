@@ -58,7 +58,7 @@ if (num.control != num.treat) {
 num.comparison <- num.control
 
 # function to plot volcano plot and heatmap
-plot.volcano.heatmap <- function(name.control, name.treat) {
+plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, file.dea.table) {
   file.dea.table <- paste(dea.path, "/dea_", name.control, "_", name.treat, ".tsv", sep = "")
   norm.control <- paste(norm.path, "/", name.control, "_gene_norm.tsv", sep = "")  # normalized table of control
   norm.treat <- paste(norm.path, "/", name.treat, "_gene_norm.tsv", sep = "")  # normalized table of treat
@@ -202,5 +202,5 @@ plot.volcano.heatmap <- function(name.control, name.treat) {
 for (ith.comparison in c(1:num.comparison)) {
   name.control <- controls[ith.comparison]
   name.treat <- treats[ith.comparison]
-  plot.volcano.heatmap(name.control, name.treat)
+  plot.volcano.heatmap(name.control, name.treat, dea.path, norm.path, file.dea.table)
 }

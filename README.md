@@ -4,6 +4,10 @@ Main differences with the master branch: creates a PCA plot, use local gene
 annotation files to skip slow and often failing internet queries. 
 Main limitation: gene annotations limited to human genes (to be fixed later)
 
+## To do
+
+* Use gene annotation file for any species
+
 ## Workflow
 <img src="https://github.com/zhxiaokang/RNA-Seq-analysis/blob/master/workflow/workflow_chart.jpg" width="450">
 
@@ -63,6 +67,13 @@ sed -i "s/VAL_EnsemblDataSet/hsapiens_gene_ensembl/" configs/config_main.yaml
 or the following to skip the question
 
 `python main.py <<< y`
+
+### Additional results
+
+```bash
+Rscript scripts/merge_deseq2.R # see all-samples* in output/project/trans/dea/coutGroup
+Rscript scripts/merge_tpm.R    # see all-samples* in output/project/trans/tpmFile
+```
 
 ## Tutorial
 A more detailed tutorial of how to use this workflow can be found here: [Tutorial](https://github.com/zhxiaokang/RASflow/blob/master/Tutorial.pdf)
