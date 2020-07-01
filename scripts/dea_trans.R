@@ -1,6 +1,6 @@
 # Use edgeR to do DEA on the outputs from Salmon
 
-suppressMessages(library(biomaRt, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+#suppressMessages(library(biomaRt, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(yaml, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(edgeR, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(DESeq2, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
@@ -8,7 +8,7 @@ suppressMessages(library(tximport, warn.conflicts = FALSE, quietly = TRUE, verbo
 
 # ====================== define the function of DEA ======================
 
-DEA <- function(control, treat, file.control, file.treat, output.path.dea) {
+DEA <- function(control, treat, file.control, file.treat, output.path.dea, subject.all, group.all, pair.test) {
   count.control <- read.table(file.control, header = TRUE, row.names = 1)
   count.treat <- read.table(file.treat, header = TRUE, row.names = 1)
   count.table <- cbind(count.control, count.treat)  # merge the control and treat tables together
@@ -26,6 +26,7 @@ DEA <- function(control, treat, file.control, file.treat, output.path.dea) {
   # define the group
   subject <- factor(subject.all[c(which(group.all == control), which(group.all == treat))])
   group <- factor(group.all[c(which(group.all == control), which(group.all == treat))])
+  group <- relevel(group, ref = control)
 
   # The design matrix
   if (pair.test) {
@@ -118,7 +119,7 @@ DEA <- function(control, treat, file.control, file.treat, output.path.dea) {
     }
 
     ## specify the control group
-    dds$group <- relevel(dds$group, ref = control)
+#    dds$group <- relevel(dds$group, ref = control)
     
     ## perform DEA
     dds <- estimateSizeFactors(dds, type="poscounts")
@@ -188,7 +189,7 @@ for (ith.comparison in c(1:num.comparison)) {
   file.treat <- paste(output.path, '/countGroup/', treat, '_trans_abundance.tsv', sep = '')
   output.path.dea <- paste(output.path, '/DEA/transcript-level', sep = '')
   
-  DEA(control, treat, file.control, file.treat, output.path.dea)
+  DEA(control, treat, file.control, file.treat, output.path.dea, subject.all, group.all, pair.test)
   
   # --------------------- On gene level ---------------------
   if (gene.level) {
@@ -196,7 +197,7 @@ for (ith.comparison in c(1:num.comparison)) {
     file.treat <- paste(output.path, '/countGroup/', treat, '_gene_abundance.tsv', sep = '')
     output.path.dea <- paste(output.path, '/DEA/gene-level', sep = '')
   
-    DEA(control, treat, file.control, file.treat, output.path.dea)
+    DEA(control, treat, file.control, file.treat, output.path.dea, subject.all, group.all, pair.test)
   }
 }
 

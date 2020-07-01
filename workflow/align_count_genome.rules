@@ -37,7 +37,7 @@ else:
             key = key,
             input_path = input_path
         run:
-            shell("scp -i {params.key} {params.input_path}/{wildcards.sample}*.f*q.gz {output.read}")
+            shell("scp -i {params.key} {params.input_path}/{wildcards.sample}.f*q.gz {output.read}")
 
 rule indexGenome:
     input:
@@ -49,7 +49,7 @@ rule indexGenome:
         index = intermediate_path + "/indexes/index"
     shell:
         "mkdir {output.indexes} && hisat2-build --quiet -p {config[NCORE]} {input.genome} {params.index}"
-        "&& hisat2_extract_splice_sites.py {config[ANNOTATION]} > {output.splicesites}"
+        "&& zcat {config[ANNOTATION]} | hisat2_extract_splice_sites.py - > {output.splicesites}"
 
 if end == "pair":
     rule alignment:
