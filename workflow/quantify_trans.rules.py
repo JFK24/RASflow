@@ -35,11 +35,8 @@ else:
         params:
             key = key,
             input_path = input_path
-        shell:
-            """
-            shopt -s extglob
-            scp -i {params.key} {params.input_path}/{wildcards.sample}?(.*).f*q.gz {output.read}
-            """
+        run:
+            shell("scp -i {params.key} {params.input_path}/{wildcards.sample}.f*q.gz {output.read}")
 
 rule indexTrans:
     input:
