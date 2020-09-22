@@ -70,19 +70,19 @@ PCA_plots <- function(res.pca, plot.title, metadata){
     theme_minimal() + 
     theme(panel.background = element_rect(fill = "white", colour = "grey50"))
   pca.plot0b <- pca.plot0.data %>% 
-    ggplot(aes(x = Dim.2, y = Dim.3))+
+    ggplot(aes(x = Dim.3, y = Dim.2))+
     geom_point(aes(color = group), size=4) +
     geom_text_repel(aes(label=labels), size = 2) +
     labs(title=plot.title, 
          subtitle = paste0("Norm. Gamma: ", round(pca.valid0b$pearsongamma, 2), 
                            ", Dunn index: ", round(pca.valid0b$dunn, 2)) ) + 
-    xlab(paste0("Dim 2 (", percent_var_pc2, "% variance)")) +
-    ylab(paste0("Dim 3 (", percent_var_pc3, "% variance)")) +
+    xlab(paste0("Dim 3 (", percent_var_pc3, "% variance)")) +
+    ylab(paste0("Dim 2 (", percent_var_pc2, "% variance)")) +
     guides(size=FALSE) +
     theme_minimal() + 
     theme(panel.background = element_rect(fill = "white", colour = "grey50"))
 
-  return(list(scree.plot0, contrib1.plot0, contrib2.plot0, contrib3.plot0, pca.plot0a, pca.plot0b, pca.valid0))
+  return(list(scree.plot0, contrib1.plot0, contrib2.plot0, contrib3.plot0, pca.plot0a, pca.plot0b, pca.valid0a, pca.valid0b))
 }
 
 # CONFIG FILE AND VARIABLES
@@ -134,7 +134,8 @@ for(i in 2:length(names.vector)){
 }
 data <- data %>% 
   mutate(trans_id_ver=as.character(trans_id_ver)) %>% 
-  mutate(total = select(., sample1:sample18) %>% rowSums) %>% 
+#  mutate(total = select(., sample1:sample18) %>% rowSums) %>% 
+  mutate(total = select(., -trans_id_ver) %>% rowSums) %>% 
   filter(total>0) %>% 
   select(-total)
 
@@ -161,4 +162,36 @@ norm.table <- as.data.frame(
 pca.table <- log2(norm.table[which(apply(norm.table, 1, var) != 0), ]+0.00000001)
 pca.table <- t(pca.table)
 res.pca <- PCA(pca.table, scale.unit = TRUE, ncp = 5, graph = FALSE)
-  
+
+#  return(list(scree.plot0, contrib1.plot0, contrib2.plot0, contrib3.plot0, pca.plot0a, pca.plot0b, pca.valid0a, pca.valid0b))
+
+plots_and_valid <- PCA_plots(res.pca, plot.title, metadata)
+scree.plot0    <- plots_and_valid[[1]]
+contrib1.plot0 <- plots_and_valid[[2]]
+contrib2.plot0 <- plots_and_valid[[3]]
+contrib3.plot0 <- plots_and_valid[[4]]
+pca.plot0a     <- plots_and_valid[[5]]
+pca.plot0b     <- plots_and_valid[[6]]
+pca.valid0a    <- plots_and_valid[[7]]
+pca.valid0b    <- plots_and_valid[[8]]
+
+pca.plot0a %>% ggsave(filename=file.path(dir.path, pca.plot1.file.name),
+                     units="cm",
+                     width=16,
+                     height=12,
+                     dpi=300)
+
+pca.plot0b %>% ggsave(filename=file.path(dir.path, pca.plot2.file.name),
+                     units="cm",
+                     width=16,
+                     height=12,
+                     dpi=300)
+
+capture.output(suppressWarnings(suppressMessages(
+  ggexport(plotlist = list(pca.plot0a, scree.plot0, contrib1.plot0, contrib2.plot0,
+                           pca.plot0b, scree.plot0, contrib2.plot0, contrib3.plot0), 
+           nrow = 2, ncol = 4, width=7200, height=3600, res=300, verbose=F,
+           filename = file.path(dir.path, pcadiag.plot.file.name)
+  )
+)),  file='/dev/null')
+
