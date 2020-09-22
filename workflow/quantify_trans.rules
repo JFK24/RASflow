@@ -25,8 +25,8 @@ if end == "pair":
             key = key,
             input_path = input_path
         run:
-            shell("scp -i {params.key} {params.input_path}/{wildcards.sample}_*1*.f*q.gz {output.forward}"),
-            shell("scp -i {params.key} {params.input_path}/{wildcards.sample}_*2*.f*q.gz {output.reverse}")
+            shell("ln -frs {params.input_path}/{wildcards.sample}_*1*.f*q.gz {output.forward}"),
+            shell("ln -frs {params.input_path}/{wildcards.sample}_*2*.f*q.gz {output.reverse}")
 
 else:
     rule getReads:
@@ -38,7 +38,7 @@ else:
         shell:
             """
             shopt -s extglob
-            scp -i {params.key} {params.input_path}/{wildcards.sample}?(.*).f*q.gz {output.read}
+            ln -frs {params.input_path}/{wildcards.sample}?(.*).f*q.gz {output.read}
             """
 
 rule indexTrans:
