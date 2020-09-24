@@ -30,9 +30,13 @@ print("Is DEA required?\n", dea)
 visualize = config["VISUALIZE"]
 print("Is visualization required?\n", visualize)
 
+## CPU cores
+cores = config["NCORE"]
+print("Number of CPU cores?\n", visualize)
+
 # Double check with the user about the requested sub-workflows to be run
 print("Please double check the information above\nDo you want to continue? (y/n)")
-check_flow = input()
+check_flow = 'y'
 if check_flow == "y":
     pass
 else:
@@ -84,7 +88,7 @@ else:
 
     if reference == "transcriptome":
         start_time = time.time()
-        os.system("nice -5 snakemake -s workflow/quantify_trans.rules 2>&1 | tee logs/log_quantify_trans.txt")
+        os.system("nice -5 snakemake --cores {} -s workflow/quantify_trans.rules 2>&1 | tee logs/log_quantify_trans.txt".format(cores))
         end_time = time.time()
         file_log_time.write("Time of running transcripts quantification:" + spend_time(start_time, end_time) + "\n")
     elif reference == "genome":
