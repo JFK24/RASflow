@@ -38,7 +38,7 @@ else:
         shell:
             """
             shopt -s extglob
-            ln -frs {params.input_path}/{wildcards.sample}?(.*).f*q.gz {output.read}
+            ln -frs {params.input_path}/{wildcards.sample}_*1*.f*q.gz {output.read}
             """
 
 rule indexTrans:
