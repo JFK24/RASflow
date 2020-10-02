@@ -37,6 +37,7 @@ END: VAL_END  # "pair" or "single"
 
 ## number of cores you want to allocate to this workflow
 NCORE: VAL_NCORE  # Integer value e.g. 4 ; Use command "getconf _NPROCESSORS_ONLN" to check the number of cores/CPU on your machine
+NCORE_SALMON: 8   # number of cores for salmon tool
 
 ## paths for intermediate outputs and final outputs
 OUTPUTPATH: data/output # e.g. data/output # intermediate output. do not upload to github
