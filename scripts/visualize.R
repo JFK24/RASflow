@@ -49,10 +49,14 @@ if (length(args) > 3) {  # this script is used in  visualize_test.rules
 controls <- yaml.file$CONTROL
 treats <- yaml.file$TREAT
 dea.tool <- yaml.file$DEATOOL
-biomart.ids <- yaml.file$BIOMART_ENS_IDS
-biomart.table <- read_tsv(biomart.ids) %>% 
-  select(`Gene stable ID`, `Transcript stable ID`, `Gene name`, `Transcript name`) %>% 
-  rename(gene_id=`Gene stable ID`, trans_id=`Transcript stable ID`, gene_name=`Gene name`, trans_name=`Transcript name`)
+ensembl_annotation <- yaml.file$ANNOTATION
+ensembl_ids  <- as_tibble(read.delim(ensembl_annotation, header=F,  comment.char = "#", stringsAsFactors=F)) %>% 
+  filter(V3=="transcript") %>% 
+  mutate(gene_id=str_extract(V9, regex("(?<=gene_id )\\w+", dotall = TRUE))) %>% 
+  mutate(gene_name=str_extract(V9, regex("(?<=gene_name )\\w+", dotall = TRUE))) %>% 
+  mutate(trans_id=str_extract(V9, regex("(?<=transcript_id )\\w+", dotall = TRUE))) %>% 
+  mutate(trans_name=str_extract(V9, regex("(?<=transcript_name )\\w+", dotall = TRUE))) %>% 
+  select(gene_id, trans_id, gene_name, trans_name)
 
 # check the number of comparisons
 num.control <- length(controls)  # number of comparisons that the user wants to do
@@ -69,7 +73,7 @@ num.comparison <- num.control
 # ==============================================================================
 # function to plot volcano plot and heatmap
 # ==============================================================================
-plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, biomart.table) {
+plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, ensembl_ids) {
   file.dea.table <- paste(dea.path, "/dea_", name.control, "_", name.treat, ".tsv", sep = "")
   norm.control <- paste(norm.path, "/", name.control, "_gene_norm.tsv", sep = "")  # normalized table of control
   norm.treat <- paste(norm.path, "/", name.treat, "_gene_norm.tsv", sep = "")  # normalized table of treat
@@ -84,14 +88,14 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
 
   gene.id.dea <- row.names(dea.table)
 
-  if (length(intersect(row.names(dea.table), biomart.table$gene_id))>0){
+  if (length(intersect(row.names(dea.table), ensembl_ids$gene_id))>0){
     gene.dea <- data.frame(id=gene.id.dea, stringsAsFactors=FALSE) %>% 
-      left_join(biomart.table %>% group_by(gene_id) %>% top_n(1, trans_id), by=c("id" = "gene_id")) %>% 
+      left_join(ensembl_ids %>% group_by(gene_id) %>% top_n(1, trans_id), by=c("id" = "gene_id")) %>% 
       select(id, gene_name) %>% 
       rename(GENEID=id, SYMBOL=gene_name)
   } else {
     gene.dea <- data.frame(id=gene.id.dea, stringsAsFactors=FALSE) %>% 
-      left_join(biomart.table %>% group_by(trans_id) %>% top_n(1, gene_id), by=c("id" = "trans_id")) %>% 
+      left_join(ensembl_ids %>% group_by(trans_id) %>% top_n(1, gene_id), by=c("id" = "trans_id")) %>% 
       select(id, trans_name) %>% 
       rename(GENEID=id, SYMBOL=trans_name)
   }
@@ -198,5 +202,5 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
 for (ith.comparison in c(1:num.comparison)) {
   name.control <- controls[ith.comparison]
   name.treat <- treats[ith.comparison]
-  plot.volcano.heatmap(name.control, name.treat, dea.path, norm.path, biomart.table)
+  plot.volcano.heatmap(name.control, name.treat, dea.path, norm.path, ensembl_ids)
 }

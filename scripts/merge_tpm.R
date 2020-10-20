@@ -95,7 +95,7 @@ METAFILE <- yaml.file$METAFILE
 OUTPUTPATH <- yaml.file$OUTPUTPATH
 DEATOOL <- yaml.file$DEATOOL
 GENE_LEVEL <- yaml.file$GENE_LEVEL
-BIOMART_ENS_IDS <- yaml.file$BIOMART_ENS_IDS
+ANNOTATION <- yaml.file$ANNOTATION
 
 # CONFIG FILE AND VARIABLES
 # ------------------------------------------------------------------------------
@@ -139,10 +139,17 @@ data <- data %>%
   filter(total>0) %>% 
   select(-total)
 
-biomart <- read_tsv(BIOMART_ENS_IDS) %>% 
-  select("Transcript stable ID version", "Transcript name", "Gene stable ID version", "Gene name") %>% 
-  rename(trans_id_ver=`Transcript stable ID version`, trans_name=`Transcript name`,
-         gene_id_ver=`Gene stable ID version`, gene_name=`Gene name`)
+biomart <- as_tibble(read.delim(ANNOTATION, header=F,  comment.char = "#", stringsAsFactors=F)) %>% 
+  filter(V3=="transcript") %>% 
+  mutate(gene_id=str_extract(V9, regex("(?<=gene_id )\\w+", dotall = TRUE))) %>% 
+  mutate(gene_ver=str_extract(V9, regex("(?<=gene_version )\\w+", dotall = TRUE))) %>% 
+  mutate(gene_id_ver=paste0(gene_id, ".", gene_ver)) %>% 
+  mutate(gene_name=str_extract(V9, regex("(?<=gene_name )\\w+", dotall = TRUE))) %>% 
+  mutate(trans_id=str_extract(V9, regex("(?<=transcript_id )\\w+", dotall = TRUE))) %>% 
+  mutate(trans_ver=str_extract(V9, regex("(?<=transcript_version )\\w+", dotall = TRUE))) %>% 
+  mutate(trans_id_ver=paste0(trans_id, ".", trans_ver)) %>% 
+  mutate(trans_name=str_extract(V9, regex("(?<=transcript_name )\\w+", dotall = TRUE))) %>% 
+  select(trans_id_ver, trans_name, gene_id_ver, gene_name)
 
 data %>% 
   left_join(biomart, by="trans_id_ver") %>% 
