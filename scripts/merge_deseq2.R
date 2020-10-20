@@ -39,7 +39,8 @@ PCA_plots <- function(res.pca, plot.title, metadata){
   # Integration of the metadata table
   res.pca.enriched.table <-  as_tibble(res.pca$ind$coord, rownames="id") %>% 
     left_join(metadata, by=c("id"="sample")) %>% 
-    column_to_rownames(var="id")
+    column_to_rownames(var="id") %>%
+    mutate(group=ifelse(is.na(group), "NA", group))
   res.pca.enriched.dist <- dist(res.pca.enriched.table[, c("Dim.1", "Dim.2")])
   clustering.labels <- as.numeric(as.factor(res.pca.enriched.table$group))
   
