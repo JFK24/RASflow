@@ -21,6 +21,7 @@ suppressMessages(library(factoextra, warn.conflicts = FALSE, quietly = TRUE, ver
 suppressMessages(library(ggpubr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(readr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(dplyr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(stringr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 
 # ==============================================================================
 #  load parameters in config file
