@@ -64,7 +64,7 @@ if end == "pair":
             config["NCORE_SALMON"]
         shell:
             """
-            salmon quant -i {input.index} -l A -1 {input.forward} -2 {input.reverse} -o {output.quant_dir} -p {threads} --seqBias --useVBOpt --validateMappings 2> /dev/null
+            salmon quant -i {input.index} -l A -1 {input.forward} -2 {input.reverse} -o {output.quant_dir} -p {threads} --gcBias --seqBias --useVBOpt --validateMappings 2> /dev/null
             awk 'NR==1{{next}}{{print $1"\\t"$4}}' {output.quant_dir}/quant.sf > {output.tpm}
             """
 else:
