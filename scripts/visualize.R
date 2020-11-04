@@ -116,6 +116,7 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
   }
   
   as.pdf(fig.volcano, width = 9, height = 6, scaled = TRUE, file = file.path(out.path, paste('volcano_plot_', name.control, '_', name.treat, '.pdf', sep = '')))
+  as.png(fig.volcano, width = 1800, height = 1200, scaled = TRUE, file = file.path(out.path, paste('volcano_plot_', name.control, '_', name.treat, '.png', sep = '')))
 
   # heatmap
   #-----------------------------------------------------------------------------
@@ -151,6 +152,13 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
 
   ## draw heatmap
   pdf(file = file.path(out.path, paste('heatmap_', name.control, '_', name.treat, '.pdf', sep = '')), width = 15, height = 15, title = 'Heatmap using the top features')
+#  heatmap(as.matrix(norm.table.deg), ColSideColors = palette.group, margins = c(15,15), labRow = gene.norm.table, cexRow = 1.9, cexCol = 1.9)
+  heatmap(as.matrix(log2(norm.table.deg+0.00000001)), ColSideColors = palette.group, margins = c(15,15), labRow = gene.norm.table, cexRow = 1.9, cexCol = 1.9)
+  legend("topleft", title = 'Group', legend=groups, text.font = 15,
+         col = palette, fill = palette, cex=1.8)
+  dev.off()
+
+  png(file = file.path(out.path, paste('heatmap_', name.control, '_', name.treat, '.png', sep = '')), width = 1500, height = 1500, title = 'Heatmap using the top features')
 #  heatmap(as.matrix(norm.table.deg), ColSideColors = palette.group, margins = c(15,15), labRow = gene.norm.table, cexRow = 1.9, cexCol = 1.9)
   heatmap(as.matrix(log2(norm.table.deg+0.00000001)), ColSideColors = palette.group, margins = c(15,15), labRow = gene.norm.table, cexRow = 1.9, cexCol = 1.9)
   legend("topleft", title = 'Group', legend=groups, text.font = 15,
@@ -194,6 +202,14 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
   ggexport(plotlist = list(pca.plot), 
          nrow = 3, ncol = 1,
          filename = file.path(out.path, paste('pca_', name.control, '_', name.treat, '.pdf', sep = ''))
+         )
+  ggexport(plotlist = list(scree.plot, contrib1.plot, contrib2.plot), 
+         nrow = 3, ncol = 1, width=1000, height=1200,
+         filename = file.path(out.path, paste('pca_diag_', name.control, '_', name.treat, '.png', sep = ''))
+         )
+  ggexport(plotlist = list(pca.plot), 
+         nrow = 3, ncol = 1, width=1000, height=1000,
+         filename = file.path(out.path, paste('pca_', name.control, '_', name.treat, '.png', sep = ''))
          )
 }
 
