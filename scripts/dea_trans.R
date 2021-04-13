@@ -9,8 +9,8 @@ suppressMessages(library(tximport, warn.conflicts = FALSE, quietly = TRUE, verbo
 # ====================== define the function of DEA ======================
 
 DEA <- function(control, treat, file.control, file.treat, output.path.dea, subject.all, group.all, pair.test) {
-  count.control <- read.table(file.control, header = TRUE, row.names = 1)
-  count.treat <- read.table(file.treat, header = TRUE, row.names = 1)
+  count.control <- read.table(file.control, header = TRUE, row.names = 1, check.names=FALSE)
+  count.treat <- read.table(file.treat, header = TRUE, row.names = 1, check.names=FALSE)
   count.table <- cbind(count.control, count.treat)  # merge the control and treat tables together
   
   # number of samples in control and treat groups (should be the same if it's a pair test)

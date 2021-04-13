@@ -110,7 +110,7 @@ for (ext in extensions) {
   data <- read.delim(file.paths.vector[1], check.names=FALSE) %>% rownames_to_column("ensembl_id") %>% as_tibble()
   
   for(f in file.paths.vector[-1]){
-    temp_table <- read.delim(f) %>% rownames_to_column("ensembl_id") %>% as_tibble()
+    temp_table <- read.delim(f, check.names=FALSE) %>% rownames_to_column("ensembl_id") %>% as_tibble()
     data <- data %>% left_join(temp_table, by = "ensembl_id")
   }
   
