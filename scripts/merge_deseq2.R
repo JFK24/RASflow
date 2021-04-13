@@ -107,7 +107,7 @@ for (ext in extensions) {
   
   # MERGE TABLES AND SAVE
   # ------------------------------------------------------------------------------
-  data <- read.delim(file.paths.vector[1]) %>% rownames_to_column("ensembl_id") %>% as_tibble()
+  data <- read.delim(file.paths.vector[1], check.names=FALSE) %>% rownames_to_column("ensembl_id") %>% as_tibble()
   
   for(f in file.paths.vector[-1]){
     temp_table <- read.delim(f) %>% rownames_to_column("ensembl_id") %>% as_tibble()
