@@ -141,14 +141,14 @@ data <- data %>%
 
 biomart <- as_tibble(read.delim(ANNOTATION, header=F,  comment.char = "#", stringsAsFactors=F)) %>% 
   filter(V3=="transcript") %>% 
-  mutate(gene_id=str_extract(V9, regex("(?<=gene_id )\\w+", dotall = TRUE))) %>% 
-  mutate(gene_ver=str_extract(V9, regex("(?<=gene_version )\\w+", dotall = TRUE))) %>% 
+  mutate(gene_id=str_extract(V9, regex("(?<=gene_id )(.+?)(?=;)", dotall = TRUE))) %>% 
+  mutate(gene_ver=str_extract(V9, regex("(?<=gene_version )(.+?)(?=;)", dotall = TRUE))) %>% 
   mutate(gene_id_ver=paste0(gene_id, ".", gene_ver)) %>% 
-  mutate(gene_name=str_extract(V9, regex("(?<=gene_name )\\w+", dotall = TRUE))) %>% 
-  mutate(trans_id=str_extract(V9, regex("(?<=transcript_id )\\w+", dotall = TRUE))) %>% 
-  mutate(trans_ver=str_extract(V9, regex("(?<=transcript_version )\\w+", dotall = TRUE))) %>% 
+  mutate(gene_name=str_extract(V9, regex("(?<=gene_name )(.+?)(?=;)", dotall = TRUE))) %>% 
+  mutate(trans_id=str_extract(V9, regex("(?<=transcript_id )(.+?)(?=;)", dotall = TRUE))) %>% 
+  mutate(trans_ver=str_extract(V9, regex("(?<=transcript_version )(.+?)(?=;)", dotall = TRUE))) %>% 
   mutate(trans_id_ver=paste0(trans_id, ".", trans_ver)) %>% 
-  mutate(trans_name=str_extract(V9, regex("(?<=transcript_name )\\w+", dotall = TRUE))) %>% 
+  mutate(trans_name=str_extract(V9, regex("(?<=transcript_name )(.+?)(?=;)", dotall = TRUE))) %>% 
   select(trans_id_ver, trans_name, gene_id_ver, gene_name)
 
 data %>% 

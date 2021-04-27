@@ -53,10 +53,10 @@ dea.tool <- yaml.file$DEATOOL
 ensembl_annotation <- yaml.file$ANNOTATION
 ensembl_ids  <- as_tibble(read.delim(ensembl_annotation, header=F,  comment.char = "#", stringsAsFactors=F)) %>% 
   filter(V3=="transcript") %>% 
-  mutate(gene_id=str_extract(V9, regex("(?<=gene_id )\\w+", dotall = TRUE))) %>% 
-  mutate(gene_name=str_extract(V9, regex("(?<=gene_name )\\w+", dotall = TRUE))) %>% 
-  mutate(trans_id=str_extract(V9, regex("(?<=transcript_id )\\w+", dotall = TRUE))) %>% 
-  mutate(trans_name=str_extract(V9, regex("(?<=transcript_name )\\w+", dotall = TRUE))) %>% 
+  mutate(gene_id=str_extract(V9, regex("(?<=gene_id )(.+?)(?=;)", dotall = TRUE))) %>% 
+  mutate(gene_name=str_extract(V9, regex("(?<=gene_name )(.+?)(?=;)", dotall = TRUE))) %>% 
+  mutate(trans_id=str_extract(V9, regex("(?<=transcript_id )(.+?)(?=;)", dotall = TRUE))) %>% 
+  mutate(trans_name=str_extract(V9, regex("(?<=transcript_name )(.+?)(?=;)", dotall = TRUE))) %>% 
   select(gene_id, trans_id, gene_name, trans_name)
 
 # check the number of comparisons
