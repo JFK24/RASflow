@@ -33,11 +33,11 @@ norm.path <- args[1] # norm.path <- 'output/test/trans/dea/countGroup'
 dea.path <- args[2]  # dea.path <- 'output/test/trans/dea/DEA/gene-level'
 out.path <- args[3]  # out.path <- 'output/test/trans/dea/visualization'
 
-#norm.path <- 'output/GSE63511/trans/dea/countGroup'
-#dea.path <- 'output/GSE63511/trans/dea/DEA/gene-level'
-#out.path <- 'output/GSE63511/trans/dea/visualization'
-#name.control <- "Normal"
-#name.treat <- "Tumour"
+norm.path <- '../../RASflowResults/MZB_WT_KO/trans/dea/countGroup'
+dea.path <- '../../RASflowResults/MZB_WT_KO/trans/dea/DEA/gene-level'
+out.path <- '../../RASflowResults/MZB_WT_KO/trans/dea/visualization'
+name.control <- "WT"
+name.treat <- "KO"
 
 # load the config file
 if (length(args) > 3) {  # this script is used in  visualize_test.rules
@@ -116,8 +116,10 @@ plot.volcano.heatmap <- function(name.control, name.treat, dea.path, norm.path, 
   }
   
   as.pdf(fig.volcano, width = 9, height = 6, scaled = TRUE, file = file.path(out.path, paste('volcano_plot_', name.control, '_', name.treat, '.pdf', sep = '')))
-  as.png(fig.volcano, width = 1800, height = 1200, scaled = TRUE, file = file.path(out.path, paste('volcano_plot_', name.control, '_', name.treat, '.png', sep = '')))
-
+  png(file.path(out.path, paste('volcano_plot_', name.control, '_', name.treat, '.png', sep = '')), , width = 20, height = 16, units="cm", res=300)
+  fig.volcano
+  dev.off()
+  
   # heatmap
   #-----------------------------------------------------------------------------
   norm.table.control <- read.table(norm.control, header = TRUE, row.names = 1)
