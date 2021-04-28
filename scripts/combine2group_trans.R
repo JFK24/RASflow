@@ -79,6 +79,9 @@ if (gene.level) {
     tx2gene <- select(txdb, k, "GENEID", "TXNAME")
     # save tx2gene
     output.file.tx2gene <- file.path(output.path, "countGroup", 'tx2gene.RData')
+    if(grepl("RData", output.file.tx2gene)==TRUE){
+      system(paste("rm -f", output.file.tx2gene))
+      }
     save(tx2gene, file = output.file.tx2gene)
 #  } else{
 #    ensembl <- useEnsembl(biomart = "ensembl", dataset = dataset)
