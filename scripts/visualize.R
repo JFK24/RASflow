@@ -33,9 +33,9 @@ norm.path <- args[1] # norm.path <- 'output/test/trans/dea/countGroup'
 dea.path <- args[2]  # dea.path <- 'output/test/trans/dea/DEA/gene-level'
 out.path <- args[3]  # out.path <- 'output/test/trans/dea/visualization'
 
-# norm.path <- '../../RASflowResults/MZB_WT_KO/trans/dea/countGroup'
-# dea.path <- '../../RASflowResults/MZB_WT_KO/trans/dea/DEA/gene-level'
-# out.path <- '../../RASflowResults/MZB_WT_KO/trans/dea/visualization'
+# norm.path <- '../../RASflowResults/MZB_WT_KO_2/trans/dea/countGroup'
+# dea.path <- '../../RASflowResults/MZB_WT_KO_2/trans/dea/DEA/gene-level'
+# out.path <- '../../RASflowResults/MZB_WT_KO_2/trans/dea/visualization'
 # name.control <- "WT"
 # name.treat <- "KO"
 
