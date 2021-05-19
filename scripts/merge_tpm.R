@@ -9,6 +9,7 @@ suppressMessages(library(factoextra, warn.conflicts = FALSE, quietly = TRUE, ver
 suppressMessages(library(ggpubr, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(ggrepel, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 suppressMessages(library(fpc, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
+suppressMessages(library(writexl, warn.conflicts = FALSE, quietly = TRUE, verbose = FALSE))
 
 # PCA PLOTS FUNCTION
 # ------------------------------------------------------------------------------
@@ -108,6 +109,8 @@ file.paths.vector <- file.path(dir.path, file.names.vector)
 
 plot.title <- "PCA on TPM values"
 table.file.name <- "all_samples_tpm.tsv"
+table.file.name.zip <- "all_samples_tpm.zip"
+table.file.name.xls <- "all_samples_tpm.xlsx"
 pca.plot1.file.name <- "all_samples_tpm_pca.dim1_2.png"
 pca.plot2.file.name <- "all_samples_tpm_pca.dim2_3.png"
 pcadiag.plot.file.name <- "all_samples_tpm_pcadiag.png"
@@ -155,6 +158,15 @@ data %>%
   left_join(biomart, by="trans_id_ver") %>% 
   select(trans_id_ver, trans_name, gene_id_ver, gene_name, everything()) %>% 
   write_tsv(file.path(dir.path, table.file.name))
+if(file.exists(file.path(dir.path, table.file.name.zip))) {file.remove(file.path(dir.path, table.file.name.zip))}
+zip(zipfile = file.path(dir.path, table.file.name.zip), files = file.path(dir.path, table.file.name), flags="-qj")
+file.remove(file.path(dir.path, table.file.name))
+
+data %>% 
+  left_join(biomart, by="trans_id_ver") %>% 
+  select(trans_id_ver, trans_name, gene_id_ver, gene_name, everything()) %>% 
+  writexl::write_xlsx(file.path(dir.path, table.file.name.xls))
+
 
 # PCA PLOTTING
 # ------------------------------------------------------------------------------
